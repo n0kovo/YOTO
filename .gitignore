@@ -7,3 +7,7 @@ models/pretrained/*
 !models/pretrained/.gitkeep
 *.pyc
 output*
+.DS_Store
+__pycache__/
+*/__pycache__/*
+*.pyc

@@ -209,6 +209,37 @@ def split_dataset_livefb(txt_file_name, split_seed=20, ratio=0.8):
     return train_name, val_name
 
 
+def split_dataset_aadb(txt_file_name, split_seed=20, ratio=0.8):
+    """AADB has predefined train/val/test splits.
+
+    txt_file_name points to the *train* score file; val and test files are
+    derived by replacing 'Train' in the filename.  The ratio parameter is
+    honoured only at the extremes: ratio==0 returns ([], val_names) and
+    ratio==1 returns (train_names, []).
+    """
+    import os
+
+    label_dir = os.path.dirname(txt_file_name)
+    train_file = os.path.join(label_dir, "imgListTrainRegression_score.txt")
+    val_file = os.path.join(label_dir, "imgListTestRegression_score.txt")
+
+    def _read_names(path):
+        names = []
+        with open(path, "r") as f:
+            for line in f:
+                dis, _ = line.split()
+                name, _ = dis.rsplit(".", 1)
+                if name not in names:
+                    names.append(name)
+        return names
+
+    if ratio == 0:
+        return [], _read_names(val_file)
+    if ratio == 1:
+        return _read_names(train_file), []
+    return _read_names(train_file), _read_names(val_file)
+
+
 class RandCrop(object):
     def __init__(self, patch_size):
         self.patch_size = patch_size
